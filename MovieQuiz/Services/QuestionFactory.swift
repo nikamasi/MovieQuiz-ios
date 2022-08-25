@@ -3,6 +3,10 @@ import UIKit
 
 
 class QuestionFactory: QuestionFactoryProtocol {
+    init(delegate: QuestionFactoryDelegate) {
+        self.delegate = delegate
+    }
+    private let delegate: QuestionFactoryDelegate
     private let questions: [QuizQuestion] = [
         QuizQuestion(
             image: UIImage(named: "The Godfather"),
@@ -56,9 +60,8 @@ class QuestionFactory: QuestionFactoryProtocol {
             answer: false)
     ]
 
-    func requestNextQuestion() -> QuizQuestion? {
+    func requestNextQuestion() {
         let index = (0..<questions.count).randomElement() ?? 0
-        return questions[safe: index]
+        self.delegate.didReceiveNextQuestion(question: questions[safe: index])
     }
-    
 }
