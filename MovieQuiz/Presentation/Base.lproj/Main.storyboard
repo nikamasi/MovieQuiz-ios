@@ -56,11 +56,10 @@
                                             </imageView>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="OUY-kM-5by" secondAttribute="trailing" id="CgD-Qz-Dy9"/>
-                                            <constraint firstItem="OUY-kM-5by" firstAttribute="leading" secondItem="HfZ-48-1NE" secondAttribute="leading" id="KIW-at-SKA"/>
                                             <constraint firstItem="OUY-kM-5by" firstAttribute="centerX" secondItem="HfZ-48-1NE" secondAttribute="centerX" id="KyG-bz-HQc"/>
                                             <constraint firstAttribute="bottom" secondItem="OUY-kM-5by" secondAttribute="bottom" id="YYj-LH-7mc"/>
                                             <constraint firstItem="OUY-kM-5by" firstAttribute="top" secondItem="HfZ-48-1NE" secondAttribute="top" id="aPw-t9-qxa"/>
+                                            <constraint firstAttribute="width" secondItem="HfZ-48-1NE" secondAttribute="height" multiplier="2:3" id="ldb-9J-rl3"/>
                                             <constraint firstItem="OUY-kM-5by" firstAttribute="centerY" secondItem="HfZ-48-1NE" secondAttribute="centerY" id="r0s-b6-mrp"/>
                                         </constraints>
                                     </view>
@@ -132,8 +131,8 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="6oV-XH-hTW">
-                                <rect key="frame" x="197" y="438" width="20" height="193"/>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="6oV-XH-hTW">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
                             </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
