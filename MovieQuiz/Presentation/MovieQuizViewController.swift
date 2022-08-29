@@ -3,33 +3,39 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestionIndex = 0
     private var score = 0
-    private var totalScore = 0
-    private var highestScore = 0
-    private var highestScoreDate = ""
-    private var quizesPlayed = 0
-    private var averageAccuracy: Float = 0
     private let dateFormatter = DateFormatter()
     private let dateFormat = "dd.MM.yy HH:mm"
-
+    private var statisticService: StatisticService?
+    private let questionsAmount: Int = 10
+    private var questionFactory: QuestionFactoryProtocol?
+    private var currentQuestion: QuizQuestion?
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var counterLabel: UILabel!
     @IBOutlet private var textLabel: UILabel!
     @IBOutlet private weak var yesButton: UIButton!
     @IBOutlet private weak var noButton: UIButton!
-
-    private let questionsAmount: Int = 10
-    private var questionFactory: QuestionFactoryProtocol?
-    private var currentQuestion: QuizQuestion?
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
 
     // MARK: - Lifecycle
-
     override func viewDidLoad() {
         super.viewDidLoad()
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 20
         dateFormatter.dateFormat = dateFormat
-        questionFactory = QuestionFactory(delegate: self)
+        questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
+        showLoadingIndicator()
+        questionFactory?.loadData()
         questionFactory?.requestNextQuestion()
+        statisticService = StatisticServiceImplementation()
+    }
+
+    func didLoadDataFromServer() {
+        activityIndicator.isHidden = true
+        questionFactory?.requestNextQuestion()
+    }
+
+    func didFailToLoadData(with error: Error) {
+        showNetworkError(message: error.localizedDescription)
     }
 
     // MARK: - Actions
@@ -48,6 +54,19 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     // MARK: - Private functions
+    private func showLoadingIndicator() {
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+    }
+
+    private func showNetworkError(message: String) {
+        activityIndicator.isHidden = true
+        let alert = UIAlertController(title: "Ошибка соединения", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "Попробовать ещё раз", style: .default, handler: nil)
+        alert.addAction(action)
+        self.present(alert, animated: true, completion: nil)
+    }
+
     private func handleButtonClick(answerWasCorrect: Bool) {
         toggleAnswerButtons()
         if answerWasCorrect {
@@ -67,7 +86,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         counterLabel.text = step.questionNumber
     }
 
-
     private func toggleAnswerButtons() {
         noButton.isEnabled.toggle()
         yesButton.isEnabled.toggle()
@@ -84,31 +102,30 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             imageView.layer.borderWidth = 0
             questionFactory?.requestNextQuestion()
         } else {
-            quizesPlayed += 1
-            totalScore += score
-            if score > highestScore {
-                highestScore = score
-                highestScoreDate = dateFormatter.string(from: Date())
-            }
-            averageAccuracy = Float(totalScore * 1000 / (questionsAmount * quizesPlayed)) / 10
+            statisticService?.store(correct: score, total: questionsAmount)
             let title = score == questionsAmount ? "Поздравляем!" : "Этот раунд окончен!"
+            guard let stats = statisticService else {
+                return
+            }
+            let correct = stats.bestGame.correct
+            let totalQuestions = stats.bestGame.total
+            let dateString = dateFormatter.string(from: stats.bestGame.date)
+            let message = """
+                Ваш результат: \(score)/\(questionsAmount)
+                Количество сыгранных квизов: \(stats.gamesCount)
+                Рекорд: \(correct)/\(totalQuestions) (\(dateString))
+                Средняя точность: \(String(format: "%.2f", stats.totalAccuracy))%
+                """
             let resultsViewModel = QuizResultsViewModel(
                 title: title,
-                text: """
-                Ваш результат: \(score)/\(questionsAmount)
-                Количество сыгранных квизов: \(quizesPlayed)
-                Рекорд: \(highestScore)/\(questionsAmount) (\(highestScoreDate))
-                Средняя точность: \(averageAccuracy)%
-                """,
+                text: message,
                 buttonText: "Сыграть еще раз")
             let resultAlertPresenter = ResultAlertPresenter()
             resultAlertPresenter.showResults(quiz: resultsViewModel, alertPresenter: self) { [weak self] _ in
-                    guard let
-                        self = self
-                    else {
-                        return
-                    }
-                    self.startNewRound()
+                guard let self = self else {
+                    return
+                }
+                self.startNewRound()
             }
         }
     }
@@ -121,13 +138,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
+        let image = UIImage(data: model.image)
         let step = QuizStepViewModel(
-            image: model.image,
+            image: image,
             questionText: model.question,
             questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)"
         )
         return step
     }
+
     // MARK: - QuestionFactoryDelegate
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else {
