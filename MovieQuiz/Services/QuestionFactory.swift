@@ -3,13 +3,15 @@ import UIKit
 
 
 class QuestionFactory: QuestionFactoryProtocol {
+    private let delegate: QuestionFactoryDelegate
+    private let moviesLoader: MoviesLoading
+    private var movies: [MostPopularMovie] = []
+    
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate) {
         self.delegate = delegate
         self.moviesLoader = moviesLoader
     }
-    private let delegate: QuestionFactoryDelegate
-    private let moviesLoader: MoviesLoading
-    private var movies: [MostPopularMovie] = []
+
     func requestNextQuestion() {
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
