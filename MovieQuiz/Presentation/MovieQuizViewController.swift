@@ -24,7 +24,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 20
         dateFormatter.dateFormat = dateFormat
-        showLoadingIndicator()
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
         questionFactory?.requestNextQuestion()
@@ -47,14 +48,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     // MARK: - Private functions
-    private func showLoadingIndicator() {
-        activityIndicator.isHidden = false
-        activityIndicator.startAnimating()
-        print("indicator")
-    }
 
     private func showNetworkError(message: String) {
-        activityIndicator.isHidden = true
         let alert = UIAlertController(title: "Ошибка соединения", message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: "Попробовать ещё раз", style: .default, handler: nil)
         alert.addAction(action)
@@ -148,7 +143,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     func didFailToLoadData(with error: Error) {
         showNetworkError(message: error.localizedDescription)
     }
-    
+
     func didReceiveNextQuestion(question: QuizQuestion?) {
         guard let question = question else {
             return
@@ -156,7 +151,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         currentQuestion = question
         let viewModel = convert(model: question)
         DispatchQueue.main.async { [weak self] in
-            self?.activityIndicator.isHidden = true
+            self?.activityIndicator.stopAnimating()
             self?.showQuestion(quiz: viewModel)
             self?.toggleAnswerButtons()
         }
