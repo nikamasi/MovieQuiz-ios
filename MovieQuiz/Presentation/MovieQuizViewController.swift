@@ -125,7 +125,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     func didFailToLoadData(with error: Error) {
         let errorPresenter = AlertPresenter()
-        print(type(of: error))
         errorPresenter.showError(
             message: error.localizedDescription,
             title: "Ошибка при получении данных",
