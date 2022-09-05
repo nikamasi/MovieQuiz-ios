@@ -49,13 +49,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
 
     // MARK: - Private functions
 
-    private func showNetworkError(message: String) {
-        let alert = UIAlertController(title: "Ошибка соединения", message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Попробовать ещё раз", style: .default, handler: nil)
-        alert.addAction(action)
-        self.present(alert, animated: true, completion: nil)
-    }
-
     private func handleButtonClick(answerWasCorrect: Bool) {
         toggleAnswerButtons()
         if answerWasCorrect {
@@ -108,7 +101,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
                 title: title,
                 text: message,
                 buttonText: "Сыграть еще раз")
-            let resultAlertPresenter = ResultAlertPresenter()
+            let resultAlertPresenter = AlertPresenter()
             resultAlertPresenter.showResults(quiz: resultsViewModel, alertPresenter: self) { [weak self] _ in
                 guard let self = self else {
                     return
@@ -141,13 +134,18 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     func didFailToLoadData(with error: Error) {
-        showNetworkError(message: error.localizedDescription)
-    }
-
-    func didReceiveNextQuestion(question: QuizQuestion?) {
-        guard let question = question else {
+        let errorPresenter = AlertPresenter()
+        print(type(of: error))
+        errorPresenter.showError(
+            message: error.localizedDescription,
+            title: "Ошибка при получении данных",
+            buttonTitle: "Попробовать еще раз",
+            alertPresenter: self) { _ in
             return
         }
+    }
+
+    func didReceiveNextQuestion(question: QuizQuestion) {
         currentQuestion = question
         let viewModel = convert(model: question)
         DispatchQueue.main.async { [weak self] in

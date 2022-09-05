@@ -6,7 +6,11 @@ class QuestionFactory: QuestionFactoryProtocol {
     private let delegate: QuestionFactoryDelegate
     private let moviesLoader: MoviesLoading
     private var movies: [MostPopularMovie] = []
-    
+    enum QuestionFactoryError: Error {
+        case noMovies(message: String)
+        case apiError(message: String)
+    }
+
     init(moviesLoader: MoviesLoading, delegate: QuestionFactoryDelegate) {
         self.delegate = delegate
         self.moviesLoader = moviesLoader
@@ -16,7 +20,13 @@ class QuestionFactory: QuestionFactoryProtocol {
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             let index = (0..<self.movies.count).randomElement() ?? 0
+            var rating: Float = 0
             guard let movie = self.movies[safe: index] else { return }
+            rating = Float(movie.rating) ?? 0
+            while rating == 0 {
+                guard let movie = self.movies[safe: index] else { return }
+                rating = Float(movie.rating) ?? 0
+            }
             var imageData = Data()
             do {
                 imageData = try Data(contentsOf: movie.imageURL)
@@ -25,8 +35,8 @@ class QuestionFactory: QuestionFactoryProtocol {
                 DispatchQueue.main.async { [weak self] in
                     self?.delegate.didFailToLoadData(with: error)
                 }
+                return
             }
-            let rating = Float(movie.rating) ?? 0
             let text = "Рейтинг этого фильма больше чем 7?"
             let correctAnswer = rating > 7
             let question = QuizQuestion(
@@ -46,8 +56,18 @@ class QuestionFactory: QuestionFactoryProtocol {
                 guard let self = self else { return }
                 switch result {
                 case .success(let movies):
-                    self.movies = movies.items
-                    self.delegate.didLoadDataFromServer()
+                    if !movies.errorMessage.isEmpty {
+                        self.delegate.didFailToLoadData(
+                            with: QuestionFactoryError.apiError(message: movies.errorMessage)
+                        )
+                    } else if movies.items.isEmpty {
+                        self.delegate.didFailToLoadData(
+                            with: QuestionFactoryError.noMovies(message: "No movies loaded.")
+                        )
+                    } else {
+                        self.movies = movies.items
+                        self.delegate.didLoadDataFromServer()
+                    }
                 case .failure(let error):
                     self.delegate.didFailToLoadData(with: error)
                 }

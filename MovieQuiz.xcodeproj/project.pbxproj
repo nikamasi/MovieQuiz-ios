@@ -13,7 +13,7 @@
 		2458653A28B63190002FA75C /* QuizStepViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458653728B63190002FA75C /* QuizStepViewModel.swift */; };
 		2458653C28B63190002FA75C /* QuizResultsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458653928B63190002FA75C /* QuizResultsViewModel.swift */; };
 		2458653E28B80890002FA75C /* QuestionFactoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458653D28B80890002FA75C /* QuestionFactoryDelegate.swift */; };
-		2458654028B8148B002FA75C /* ResultAlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458653F28B8148B002FA75C /* ResultAlertPresenter.swift */; };
+		2458654028B8148B002FA75C /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458653F28B8148B002FA75C /* AlertPresenter.swift */; };
 		2458654228BB521D002FA75C /* StatisticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458654128BB521D002FA75C /* StatisticService.swift */; };
 		2458654428BB560B002FA75C /* GameRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458654328BB560B002FA75C /* GameRecord.swift */; };
 		2458654628BCF1EE002FA75C /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2458654528BCF1EE002FA75C /* NetworkClient.swift */; };
@@ -39,7 +39,7 @@
 		2458653728B63190002FA75C /* QuizStepViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizStepViewModel.swift; sourceTree = "<group>"; };
 		2458653928B63190002FA75C /* QuizResultsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuizResultsViewModel.swift; sourceTree = "<group>"; };
 		2458653D28B80890002FA75C /* QuestionFactoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactoryDelegate.swift; sourceTree = "<group>"; };
-		2458653F28B8148B002FA75C /* ResultAlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultAlertPresenter.swift; sourceTree = "<group>"; };
+		2458653F28B8148B002FA75C /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
 		2458654128BB521D002FA75C /* StatisticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticService.swift; sourceTree = "<group>"; };
 		2458654328BB560B002FA75C /* GameRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameRecord.swift; sourceTree = "<group>"; };
 		2458654528BCF1EE002FA75C /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
@@ -110,7 +110,7 @@
 				2458653528B63175002FA75C /* QuestionFactoryProtocol.swift */,
 				2458653328B6315D002FA75C /* QuestionFactory.swift */,
 				2458653D28B80890002FA75C /* QuestionFactoryDelegate.swift */,
-				2458653F28B8148B002FA75C /* ResultAlertPresenter.swift */,
+				2458653F28B8148B002FA75C /* AlertPresenter.swift */,
 				2458654128BB521D002FA75C /* StatisticService.swift */,
 				2458654528BCF1EE002FA75C /* NetworkClient.swift */,
 				2458654928BCF6E3002FA75C /* MoviesLoader.swift */,
@@ -270,7 +270,7 @@
 				2458654828BCF5F1002FA75C /* MostPopularMovies.swift in Sources */,
 				AD1ABAB22831907B00B3E448 /* AppDelegate.swift in Sources */,
 				2458653428B6315D002FA75C /* QuestionFactory.swift in Sources */,
-				2458654028B8148B002FA75C /* ResultAlertPresenter.swift in Sources */,
+				2458654028B8148B002FA75C /* AlertPresenter.swift in Sources */,
 				AD1ABAB42831907B00B3E448 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
