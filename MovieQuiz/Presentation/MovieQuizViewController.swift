@@ -3,8 +3,6 @@ import UIKit
 final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestionIndex = 0
     private var score = 0
-    private let dateFormatter = DateFormatter()
-    private let dateFormat = "dd.MM.yy HH:mm"
     private var statisticService: StatisticService?
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
@@ -23,7 +21,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         yesButton.isEnabled = false
         imageView.layer.masksToBounds = true
         imageView.layer.cornerRadius = 20
-        dateFormatter.dateFormat = dateFormat
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
@@ -88,19 +85,12 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             guard let stats = statisticService else {
                 return
             }
-            let correct = stats.bestGame.correct
-            let totalQuestions = stats.bestGame.total
-            let dateString = dateFormatter.string(from: stats.bestGame.date)
-            let message = """
-                Ваш результат: \(score)/\(questionsAmount)
-                Количество сыгранных квизов: \(stats.gamesCount)
-                Рекорд: \(correct)/\(totalQuestions) (\(dateString))
-                Средняя точность: \(String(format: "%.2f", stats.totalAccuracy))%
-                """
             let resultsViewModel = QuizResultsViewModel(
                 title: title,
-                text: message,
-                buttonText: "Сыграть еще раз")
+                buttonText: "Сыграть еще раз",
+                stats: stats,
+                questionsAmount: questionsAmount,
+                score: score)
             let resultAlertPresenter = AlertPresenter()
             resultAlertPresenter.showResults(quiz: resultsViewModel, alertPresenter: self) { [weak self] _ in
                 guard let self = self else {
