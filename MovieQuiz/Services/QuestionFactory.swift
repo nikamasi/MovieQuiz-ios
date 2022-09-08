@@ -20,13 +20,8 @@ class QuestionFactory: QuestionFactoryProtocol {
         DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             let index = (0..<self.movies.count).randomElement() ?? 0
-            var rating: Float = 0
             guard let movie = self.movies[safe: index] else { return }
-            rating = Float(movie.rating) ?? 0
-            while rating == 0 {
-                guard let movie = self.movies[safe: index] else { return }
-                rating = Float(movie.rating) ?? 0
-            }
+            let rating = Float(movie.rating) ?? 0
             var imageData = Data()
             do {
                 imageData = try Data(contentsOf: movie.imageURL)
@@ -65,8 +60,21 @@ class QuestionFactory: QuestionFactoryProtocol {
                             with: QuestionFactoryError.noMovies(message: "No movies loaded.")
                         )
                     } else {
-                        self.movies = movies.items
-                        self.delegate.didLoadDataFromServer()
+                        var moviesWithRating: [MostPopularMovie] = []
+                        for movie in movies.items {
+                            let rating = Float(movie.rating) ?? 0
+                            if rating != 0 {
+                                moviesWithRating.append(movie)
+                            }
+                        }
+                        if moviesWithRating.isEmpty {
+                            self.delegate.didFailToLoadData(
+                                with: QuestionFactoryError.noMovies(message: "Coldn't load movies with a rating.")
+                            )
+                        } else {
+                            self.movies = moviesWithRating
+                            self.delegate.didLoadDataFromServer()
+                        }
                     }
                 case .failure(let error):
                     self.delegate.didFailToLoadData(with: error)
