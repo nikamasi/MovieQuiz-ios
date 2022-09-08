@@ -78,6 +78,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         if currentQuestionIndex < questionsAmount - 1 {
             currentQuestionIndex += 1
             imageView.layer.borderWidth = 0
+            activityIndicator.startAnimating()
             questionFactory?.requestNextQuestion()
         } else {
             statisticService?.store(correct: score, total: questionsAmount)
@@ -102,6 +103,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
 
     private func startNewRound() {
+        activityIndicator.startAnimating()
         imageView.layer.borderWidth = 0
         currentQuestionIndex = 0
         score = 0
