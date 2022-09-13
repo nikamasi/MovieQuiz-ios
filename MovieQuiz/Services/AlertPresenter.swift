@@ -8,6 +8,7 @@ class AlertPresenter {
             message: step.text,
             preferredStyle: .alert
         )
+        alert.view.accessibilityIdentifier = "results"
         let action = UIAlertAction(title: step.buttonText, style: .default, handler: onAction)
         alert.addAction(action)
         alertPresenter.present(alert, animated: true, completion: nil)
