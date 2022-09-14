@@ -38,6 +38,16 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         counterLabel.text = step.questionNumber
     }
 
+    func showResults(resultsViewModel: QuizResultsViewModel) {
+        let resultAlertPresenter = AlertPresenter()
+        resultAlertPresenter.showResults(quiz: resultsViewModel, alertPresenter: self) { [weak self] _ in
+            guard let self = self else {
+                return
+            }
+            self.startNewRound()
+        }
+    }
+
     func showLoadingIndicator() {
         activityIndicator.startAnimating()
     }

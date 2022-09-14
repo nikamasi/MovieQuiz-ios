@@ -43,7 +43,24 @@ class MovieQuizUITests: XCTestCase {
         XCTAssertFalse(firstPoster == secondPoster)
     }
 
-    func testAlert() throws {
+    func testWhenAlertAppearOnEndOfQuiz() throws {
+        playGame()
+        let alert = app.alerts["results"]
+        XCTAssertTrue(alert.exists)
+        XCTAssertTrue(alert.label == "Этот раунд окончен!")
+        XCTAssertTrue(alert.buttons.firstMatch.label == "Сыграть еще раз")
+    }
+
+    func testAlertDissapearsAndNewGameStarts() {
+        playGame()
+        let alert = app.alerts["results"]
+        alert.buttons.firstMatch.tap()
+        XCTAssertFalse(alert.exists)
+        sleep(5)
+        XCTAssertTrue(app.staticTexts["Index"].label == "1/10")
+    }
+
+    func playGame() {
         let yesButton = app.buttons[
             "Yes"
         ]
@@ -52,14 +69,6 @@ class MovieQuizUITests: XCTestCase {
             yesButton.tap()
             sleep(3)
         }
-        let alert = app.alerts["results"]
-        XCTAssertTrue(alert.exists)
-        XCTAssertTrue(alert.label == "Этот раунд окончен!")
-        XCTAssertTrue(alert.buttons.firstMatch.label == "Сыграть еще раз")
-        sleep(2)
-        alert.buttons.firstMatch.tap()
-        XCTAssertFalse(alert.exists)
-        sleep(2)
-        XCTAssertTrue(app.staticTexts["Index"].label == "1/10")
+        sleep(3)
     }
 }

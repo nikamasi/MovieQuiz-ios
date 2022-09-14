@@ -49,8 +49,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
         viewController?.toggleAnswerButtons()
         viewController?.setImageBorder(answerWasCorrect: answerWasCorrect)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             self?.showNextQuestionOrResults()
         }
     }
@@ -69,13 +68,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             questionFactory?.requestNextQuestion()
         } else {
             let resultsViewModel = makeResultMessage()
-            let resultAlertPresenter = AlertPresenter()
-            resultAlertPresenter.showResults(quiz: resultsViewModel, alertPresenter: viewController!) { [weak self] _ in
-                guard let self = self else {
-                    return
-                }
-                self.viewController?.startNewRound()
-            }
+            viewController?.showResults(resultsViewModel: resultsViewModel)
         }
     }
 
@@ -98,18 +91,22 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
 // MARK: - QuestionFactoryDelegate
 
     func didLoadDataFromServer() {
-        questionFactory?.requestNextQuestion()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.questionFactory?.requestNextQuestion()
+        }
     }
 
     func didFailToLoadData(with error: Error) {
         let errorPresenter = AlertPresenter()
-        errorPresenter.showError(
-            message: error.localizedDescription,
-            title: "Ошибка при получении данных",
-            buttonTitle: "Попробовать еще раз",
-            alertPresenter: viewController!) { [weak self] _ in
-                self?.restartGame()
-            return
+        DispatchQueue.main.async { [weak self] in
+            errorPresenter.showError(
+                message: error.localizedDescription,
+                title: "Ошибка при получении данных",
+                buttonTitle: "Попробовать еще раз",
+                alertPresenter: (self?.viewController!)!) { [weak self] _ in
+                    self?.restartGame()
+            }
         }
     }
 
