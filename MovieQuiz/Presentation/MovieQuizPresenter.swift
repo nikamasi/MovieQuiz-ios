@@ -49,8 +49,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         }
         viewController?.toggleAnswerButtons()
         viewController?.setImageBorder(answerWasCorrect: answerWasCorrect)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             self?.showNextQuestionOrResults()
         }
     }
