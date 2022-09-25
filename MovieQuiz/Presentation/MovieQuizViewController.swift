@@ -48,6 +48,17 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         }
     }
 
+    func showError(message: String, title: String, buttonText: String, onAction: @escaping (UIAlertAction) -> Void) {
+        let errorPresenter = AlertPresenter()
+        errorPresenter.showError(
+            message: message,
+            title: title,
+            buttonText: buttonText,
+            alertPresenter: self,
+            onAction: onAction
+        )
+    }
+
     func showLoadingIndicator() {
         activityIndicator.startAnimating()
     }

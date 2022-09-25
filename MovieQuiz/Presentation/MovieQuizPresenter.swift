@@ -98,13 +98,11 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
 
     func didFailToLoadData(with error: Error) {
-        let errorPresenter = AlertPresenter()
         DispatchQueue.main.async { [weak self] in
-            errorPresenter.showError(
+            self?.viewController?.showError(
                 message: error.localizedDescription,
                 title: "Ошибка при получении данных",
-                buttonTitle: "Попробовать еще раз",
-                alertPresenter: (self?.viewController!)!) { [weak self] _ in
+                buttonText: "Попробовать еще раз") { [weak self] _ in
                     self?.restartGame()
             }
         }

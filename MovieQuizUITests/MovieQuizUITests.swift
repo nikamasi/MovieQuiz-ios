@@ -60,7 +60,7 @@ class MovieQuizUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Index"].label == "1/10")
     }
 
-    func playGame() {
+    private func playGame() {
         let yesButton = app.buttons[
             "Yes"
         ]
